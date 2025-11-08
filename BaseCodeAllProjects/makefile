@@ -4,7 +4,7 @@ LD = arm-none-eabi-ld
 SIZE = arm-none-eabi-size 
 OBJCOPY = arm-none-eabi-objcopy
 
-PROJECT = UARTS
+PROJECT = BASECODE
 
 # MCU Options
 CPU = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
