@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "uart.h": "c",
+        "stdint.h": "c",
+        "w5500_spi.h": "c",
+        "freertos.h": "c",
+        "stm32f4xx.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": true
+}
