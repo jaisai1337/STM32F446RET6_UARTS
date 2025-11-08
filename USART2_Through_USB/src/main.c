@@ -9,14 +9,13 @@
 #include <stdio.h>
 int main(void)
 {
-    // Configure system clock to 180 MHz
-    SystemClock_Config();
+    SystemClock_Config(); // Configure system clock to 180 MHz
 
     // Enable GPIOA clock (for LED)
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    RCC->AHB1ENR |= (0x1UL << 0); //RCC_AHB1ENR_GPIOAEN;
     // PA5 as output
-    GPIOA->MODER |= GPIO_MODER_MODE5_0;
-    GPIOA->MODER &= ~GPIO_MODER_MODE5_1;
+    GPIOA->MODER |= (0x1UL << (5 * 2)); // GPIO_MODER_MODE5_0;
+    GPIOA->MODER &= ~(0x1UL << (5 * 2 + 1)); // GPIO_MODER_MODE5_1;
 
     // Initialize UART2 TX (PCLK1 = 45 MHz by default on NUCLEO)
     UART2_Init(45000000u, 115200u);
@@ -46,11 +45,11 @@ int main(void)
         char c = UART2_GetChar();
         static int count = 0;
         // If data is received, echo it back
-        if (c == '1'){
+        if (c == '\n'){
             GPIOA->ODR ^= GPIO_ODR_OD5;  // Toggle LED
             printf("LED Toggled and count: %d\r\n", count++);
             
-            sysTickDelay(1000);
+            //sysTickDelay(1000);
         }
     }
 }
