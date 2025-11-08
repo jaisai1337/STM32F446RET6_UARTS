@@ -1,15 +1,17 @@
-#ifndef UART_H_
-#define UART_H_
-#include "stdint.h"
+#ifndef UART_H
+#define UART_H
+
 #include "stm32f4xx.h"
-void uart2_tx_init(void);
+#include <stdint.h>
 
-// UART write functions
-void uart2_write_char(char c);
-void uart2_write_string(const char *str);
-void uart2_write_dec(uint8_t val);
-void uart2_write_int(int val);
-void uart2_write_hex(uint8_t val);
-void uart2_write_ip(uint8_t *ip, const char *label);
+void UART2_InitTx(uint32_t pclk_hz, uint32_t baud);
+void UART2_PutChar(char c);
+void UART2_Write(const char *s);
+char UART2_GetChar(void);         // blocking receive
+void UART2_ReadString(char *buf, uint16_t maxlen); // read string until newline
+int32_t UART2_ReadInteger(void); // read integer from UART
+uint8_t UART2_Available(void);    // check if RX data ready
+void UART2_Flush(void);
+void UART2_FlushRx(void);
 
-#endif /* UART_H_ */
+#endif

@@ -1,106 +1,153 @@
 #include "uart.h"
 
-#define GPIOAEN						(1U<<0)
-#define UART2EN						(1U<<17)
-#define CR1_TE						(1U<<3)
-#define CR1_UE						(1U<<13)
-#define SR_TXE						(1U<<7)
-#define SYS_FREQ					16000000
-#define APB1_CLK					SYS_FREQ
-#define BAUDRATE					230400
+#define UART2_TX_PORT      GPIOA
+#define UART2_TX_PIN       2u     // PA2
+#define UART2_RX_PIN       3u     // PA3
+#define UART2_AF_USART2    7u     // AF7 for USART2
 
-static void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t BaudRate);
-static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t BaudRate);
 
-// void uart2_write_char(char c);
-// int _write(int file, char *ptr, int len) {
-//     int i;
-//     for (i = 0; i < len; i++) {
-//         uart2_write_char(*ptr++);
-//     }
-//     return len;
-// }
-void uart2_tx_init(void){
-	
-	// Configure uart gpio pins
-	// Enable clock access to gpioa
-	RCC->AHB1ENR |=GPIOAEN;
-	// Set PA2 mode to alternate function mode
-	GPIOA->MODER &=~(1U<<4);
-	GPIOA->MODER |= (1U<<5); 
-	// Set PA2 alternate function type to UART_TX (AF07)
-	GPIOA->AFR[0] |= (1U<<8);
-	GPIOA->AFR[0] |= (1U<<9);
-	GPIOA->AFR[0] |= (1U<<10);
-	GPIOA->AFR[0] &=~(1U<<11);
 
-	// Configure uart module
-	// Enable clock access to uart2
-	RCC->APB1ENR |=UART2EN;
-	// Configure baudrate
-	uart_set_baudrate(USART2, APB1_CLK, BAUDRATE);
-	// COnfigure the tranfer direction
-	USART2->CR1 |= CR1_TE;
-	// Enable uart module
-	USART2->CR1 |= CR1_UE;
+
+void UART2_Init(uint32_t pclk_hz, uint32_t baud)
+{
+    // ---- Enable Clocks ----
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;    // GPIOA clock
+    RCC->APB1ENR |= RCC_APB1ENR_USART2EN;   // USART2 clock
+
+    // ---- Configure PA2 (TX) and PA3 (RX) ----
+    // Alternate function mode
+    UART2_TX_PORT->MODER &= ~((3u << (UART2_TX_PIN * 2u)) | (3u << (UART2_RX_PIN * 2u)));
+    UART2_TX_PORT->MODER |=  ((2u << (UART2_TX_PIN * 2u)) | (2u << (UART2_RX_PIN * 2u)));
+
+    // AF7 for USART2
+    UART2_TX_PORT->AFR[0] &= ~((0xFu << (UART2_TX_PIN * 4u)) | (0xFu << (UART2_RX_PIN * 4u)));
+    UART2_TX_PORT->AFR[0] |=  ((UART2_AF_USART2 << (UART2_TX_PIN * 4u)) | (UART2_AF_USART2 << (UART2_RX_PIN * 4u)));
+
+    // Very high speed
+    UART2_TX_PORT->OSPEEDR |=  ((3u << (UART2_TX_PIN * 2u)) | (3u << (UART2_RX_PIN * 2u)));
+
+    // Push-pull, no pull-up/down
+    UART2_TX_PORT->OTYPER &= ~((1u << UART2_TX_PIN) | (1u << UART2_RX_PIN));
+    UART2_TX_PORT->PUPDR  &= ~((3u << (UART2_TX_PIN * 2u)) | (3u << (UART2_RX_PIN * 2u)));
+
+    // ---- Configure USART2 ----
+    USART2->CR1 = 0;
+    USART2->CR2 = 0;
+    USART2->CR3 = 0;
+
+    // Baud rate setup
+    USART2->BRR = (pclk_hz + (baud / 2u)) / baud;
+
+    // Enable TX, RX, and USART
+    USART2->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_UE);
+
+    // Clear status
+    (void)USART2->SR;
+    (void)USART2->DR;
 }
-void uart2_write_char(char c) {
-    while (!(USART2->SR & USART_SR_TXE)); // wait until TX ready
-    USART2->DR = c;
+
+void UART2_PutChar(char c)
+{
+    while ((USART2->SR & USART_SR_TXE) == 0);
+    USART2->DR = (uint16_t)c;
 }
-void uart2_write_string(const char *str) {
-    while (*str) {                 // Loop until end of string
-        uart2_write_char(*str++);       // Send each character
-    }
+
+void UART2_Write(const char *s)
+{
+    while (*s)
+        UART2_PutChar(*s++);
 }
-void uart2_write_dec(uint8_t val) {
-    if (val >= 100) {
-        uart2_write_char('0' + val / 100);
-        val %= 100;
-        uart2_write_char('0' + val / 10);
-        val %= 10;
-        uart2_write_char('0' + val);
-    } else if (val >= 10) {
-        uart2_write_char('0' + val / 10);
-        uart2_write_char('0' + val % 10);
-    } else {
-        uart2_write_char('0' + val);
-    }
+
+void UART2_Flush(void)
+{
+    while ((USART2->SR & USART_SR_TC) == 0);
 }
-void uart2_write_int(int num){
-    char buf[12]; // enough for 32-bit int
-    int i = 0;
-    if(num == 0) buf[i++] = '0';
-    else {
-        if(num < 0) {
-            uart2_write_string("-"); 
-            num = -num;
-        }
-        int temp = num;
-        while(temp > 0) { buf[i++] = (temp % 10) + '0'; temp /= 10; }
-        for(int j = i-1; j >= 0; j--) uart2_write_string((char[]){buf[j],0});
-        return;
+void UART2_FlushRx(void)
+{
+    volatile char dummy;
+
+    // Give UART time to receive any trailing newline
+    for (volatile int delay = 0; delay < 50000; delay++);
+
+    // Clear any pending bytes from RX buffer
+    while (USART2->SR & USART_SR_RXNE)
+        dummy = (char)USART2->DR;
+}
+
+
+char UART2_GetChar(void)
+{
+    while ((USART2->SR & USART_SR_RXNE) == 0);  // wait until a byte is received
+    return (char)(USART2->DR & 0xFF);
+}
+void UART2_ReadString(char *buf, uint16_t maxlen)
+{
+    uint16_t i = 0;
+    char c;
+    while (i < (maxlen - 1))
+    {
+        c = UART2_GetChar();
+        if (c == '\r' || c == '\n') break;
+        buf[i++] = c;
+        //UART2_PutChar(c); // <-- echo back
     }
     buf[i] = '\0';
-    uart2_write_string(buf);
 }
-void uart2_write_hex(uint8_t val) {
-    const char hex[] = "0123456789ABCDEF";
-    uart2_write_char(hex[(val >> 4) & 0x0F]); // high nibble
-    uart2_write_char(hex[val & 0x0F]);        // low nibble
-}
-void uart2_write_ip(uint8_t ip[4], const char* label) {
-    uart2_write_string(label);
-    uart2_write_string(" : ");
-    for (int i = 0; i < 4; i++) {
-        uart2_write_dec(ip[i]);
-        if (i < 3) uart2_write_char('.');
+
+int32_t UART2_ReadInteger(void)
+{
+    char buf[16];
+    uint8_t i = 0;
+    char c;
+    int32_t value = 0;
+    int8_t sign = 1;
+
+    // Prompt user (optional)
+    // UART2_Write("Enter number: ");
+
+    while (1)
+    {
+        c = UART2_GetChar();   // blocking receive
+
+        // Stop on Enter key
+        if (c == '\r' || c == '\n')
+            break;
+
+        // Handle backspace (optional)
+        if (c == '\b' && i > 0)
+        {
+            i--;
+            continue;
+        }
+
+        // Handle minus sign
+        if (c == '-' && i == 0)
+        {
+            sign = -1;
+            continue;
+        }
+
+        // Accept only digits
+        if (c >= '0' && c <= '9')
+        {
+            if (i < sizeof(buf) - 1)
+                buf[i++] = c;
+        }
     }
-    uart2_write_string("\r\n");
+
+    buf[i] = '\0';
+
+    // Convert manually (no stdlib needed)
+    for (uint8_t j = 0; j < i; j++)
+    {
+        value = value * 10 + (buf[j] - '0');
+    }
+
+    return value * sign;
+    
 }
-static void uart_set_baudrate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t BaudRate){
-	USARTx->BRR = compute_uart_bd(PeriphClk, BaudRate);
-}
-static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t BaudRate){
-	return	((PeriphClk + (BaudRate/2U))/BaudRate);
+
+uint8_t UART2_Available(void)
+{
+    return (USART2->SR & USART_SR_RXNE) ? 1 : 0;
 }

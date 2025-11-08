@@ -2,7 +2,7 @@
 #include "stm32f4xx.h"
 #include "systick.h"
 #include "system_clock.h"
-#include "gptUart.h"
+#include "uart.h"
 
 #define printf iprintf
 
