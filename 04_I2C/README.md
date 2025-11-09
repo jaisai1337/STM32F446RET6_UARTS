@@ -10,13 +10,16 @@ I2C2 (Slave A) at address 0x3A
 I2C3 (Slave B) at address 0x3B
 All transfers and acknowledgments happen entirely inside one MCU, with status logged over UART2.
 
-MCU Configuration:
-Peripheral	    Role	    Address	SCL Pin SDA Pin AF  Notes
-I2C1	        Master	    —	    PB6	    PB7	    AF4	Initiates all transfers
-I2C2	        Slave A	    0x3A	PB10	PC12	AF4	Responds to Master
-I2C3	        Slave B	    0x3B	PA8	    PC9	    AF4	Responds to Master
-UART2	        Debug log	—	    PA2(TX)	PA3(RX)	AF7	115200 baud
-System Clock	—	        —	    —	    —	    —	180 MHz core / 45 MHz APB1
+### 🧩 MCU Configuration
+
+| Peripheral | Role     | Address | SCL Pin | SDA Pin | AF  | Notes                    |
+|-------------|----------|----------|----------|----------|-----|--------------------------|
+| **I2C1**    | Master   | —        | PB6      | PB7      | AF4 | Initiates all transfers  |
+| **I2C2**    | Slave A  | 0x3A     | PB10     | PC12     | AF4 | Responds to Master       |
+| **I2C3**    | Slave B  | 0x3B     | PA8      | PC9      | AF4 | Responds to Master       |
+| **UART2**   | Debug log| —        | PA2 (TX) | PA3 (RX) | AF7 | 115200 baud              |
+| **System Clock** | —  | —        | —        | —        | —   | 180 MHz core / 45 MHz APB1 |
+
 
 Wiring & Hardware Setup:
 Connection	        Description
