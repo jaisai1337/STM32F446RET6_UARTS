@@ -37,12 +37,15 @@ Ensure idle bus levels measure ≈3.3 V on SCL and SDA before flashing.
 
 Firmware Flow Summary:
 
-SystemClock_Config() — sets up 180 MHz system clock, APB1 = 45 MHz.
-UART2_Init() — initializes debug serial (115200 bps).
-I2C_Bus_Recovery() — toggles PB6/PB7 to free any stuck SDA/SCL lines.
-I2C2_Slave_Init() — configures Slave A (PB10/PC12).
-I2C3_Slave_Init() — configures Slave B (PA8/PC9).
-I2C1_Master_Init() — initializes Master on PB6/PB7.
-Master → Slave A (0x3A) — sends "JAISAI".
-Master → Slave B (0x3B) — sends "STM32F4".
-UART prints confirmation for both.
+###  Firmware Flow Summary
+
+1. **SystemClock_Config()**  Configures the MCU to run at **180 MHz** core clock with **APB1 = 45 MHz**.
+2. **UART2_Init()**  Sets up the debug UART on **PA2/PA3** at **115200 bps** for status output.
+3. **I2C_Bus_Recovery()** Toggles **PB6 (SCL)** and **PB7 (SDA)** to release any stuck I²C lines before initialization.
+4. **I2C2_Slave_Init()** Initializes **Slave A** (address `0x3A`) on **PB10/PC12**.
+5. **I2C3_Slave_Init()** Initializes **Slave B** (address `0x3B`) on **PA8/PC9**.
+6. **I2C1_Master_Init()**  Configures **I2C1** as the **master** on **PB6/PB7**.
+7. **Data Transfer Phase**  
+   - Master → Slave A (`0x3A`): sends **"JAISAI"**  
+   - Master → Slave B (`0x3B`): sends **"STM32F4"**
+8. **Result Logging** UART2 prints transfer progress, received data, and completion status.
