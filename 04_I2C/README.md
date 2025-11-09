@@ -51,7 +51,9 @@ Ensure idle bus levels measure ≈3.3 V on SCL and SDA before flashing.
 ### 🧾 Expected UART Output
 
 After flashing the firmware and opening a serial terminal at **115200 bps (8N1)**, you should see output similar to the following:
-=== I2C1 Master → I2C2/I2C3 Slaves Test ===
+──────────────────────────────────────────────
+===I2C1 Master → I2C2 / I2C3 Slaves Test===
+──────────────────────────────────────────────
 
 [TEST] Master → Slave A (I2C2 @ 0x3A)
 Slave A received: JAISAI
@@ -59,5 +61,6 @@ Slave A received: JAISAI
 [TEST] Master → Slave B (I2C3 @ 0x3B)
 Slave B received: STM32F4
 
-=== All I2C Tests Completed Successfully ===
+===All I2C transfers completed successfully===
+──────────────────────────────────────────────
 
