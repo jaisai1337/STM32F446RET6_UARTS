@@ -16,8 +16,8 @@ extern "C" {
 
 // Slave addresses
 #define I2C1_SLAVE_ADDR        0x3A
-#define I2C2_SLAVE_ADDR        0x3A
-#define I2C3_SLAVE_ADDR        0x3B
+#define I2C2_SLAVE_ADDR        0x3B
+#define I2C3_SLAVE_ADDR        0x3C
 
 
 void I2C_Internal_Test_All(uint8_t master_id);
