@@ -10,7 +10,7 @@ I2C2 (Slave A) at address 0x3A
 I2C3 (Slave B) at address 0x3B
 All transfers and acknowledgments happen entirely inside one MCU, with status logged over UART2.
 
-### 🧩 MCU Configuration
+###  MCU Configuration
 
 | Peripheral | Role     | Address | SCL Pin | SDA Pin | AF  | Notes                    |
 |-------------|----------|----------|----------|----------|-----|--------------------------|
@@ -21,13 +21,16 @@ All transfers and acknowledgments happen entirely inside one MCU, with status lo
 | **System Clock** | —  | —        | —        | —        | —   | 180 MHz core / 45 MHz APB1 |
 
 
-Wiring & Hardware Setup:
-Connection	        Description
-PB6 - PB10 - PA8	Common SCL line
-PB7 - PC12 - PC9	Common SDA line
-4.7 kΩ resistor	    Between SCL and 3.3 V
-4.7 kΩ resistor	    Between SDA and 3.3 V
-Common GND	        All pins share MCU ground
+###  Wiring & Hardware Setup
+
+| Connection | Description |
+|-------------|--------------|
+| **PB6 ↔ PB10 ↔ PA8** | Common SCL line (shared between I2C1, I2C2, and I2C3) |
+| **PB7 ↔ PC12 ↔ PC9** | Common SDA line (shared between I2C1, I2C2, and I2C3) |
+| **4.7 kΩ resistor** | Between SCL and 3.3 V (pull-up) |
+| **4.7 kΩ resistor** | Between SDA and 3.3 V (pull-up) |
+| **Common GND** | All pins share MCU ground |
+
 
 Use external pull-ups even if internal pull-ups are configured (for stable logic levels).
 Ensure idle bus levels measure ≈3.3 V on SCL and SDA before flashing.
