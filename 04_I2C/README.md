@@ -35,8 +35,6 @@ All transfers and acknowledgments happen entirely inside one MCU, with status lo
 Use external pull-ups even if internal pull-ups are configured (for stable logic levels).
 Ensure idle bus levels measure ≈3.3 V on SCL and SDA before flashing.
 
-Firmware Flow Summary:
-
 ###  Firmware Flow Summary
 
 1. **SystemClock_Config()**  Configures the MCU to run at **180 MHz** core clock with **APB1 = 45 MHz**.
