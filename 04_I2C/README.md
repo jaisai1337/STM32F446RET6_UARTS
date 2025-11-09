@@ -57,9 +57,11 @@ After flashing the firmware and opening a serial terminal at **115200 bps (8N1)*
 
 
 [TEST] Master → Slave A (I2C2 @ 0x3A)
+
 Slave A received: JAISAI
 
 [TEST] Master → Slave B (I2C3 @ 0x3B)
+
 Slave B received: STM32F4
 
 ===All I2C transfers completed successfully===
