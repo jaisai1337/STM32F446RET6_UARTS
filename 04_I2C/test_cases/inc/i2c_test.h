@@ -15,11 +15,12 @@ extern "C" {
 #define I2C_TEST_SPEED_HZ      100000u
 
 // Slave addresses
+#define I2C1_SLAVE_ADDR        0x3A
 #define I2C2_SLAVE_ADDR        0x3A
 #define I2C3_SLAVE_ADDR        0x3B
 
 
-void I2C_Internal_Test_All(void);
+void I2C_Internal_Test_All(uint8_t master_id);
 
 
 void I2C_Bus_Recovery(void);

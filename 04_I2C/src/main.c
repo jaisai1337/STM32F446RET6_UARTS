@@ -8,7 +8,7 @@ int main(void)
     UART2_Init(45000000u, 115200u);
 
     UART_Write(USART2, "Running I2C internal loopback test...\r\n");
-    I2C_Internal_Test_All();
+    I2C_Internal_Test_All(3);
 
     while (1);
 }
