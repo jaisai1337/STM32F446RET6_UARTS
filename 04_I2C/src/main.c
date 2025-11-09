@@ -1,0 +1,14 @@
+#include "i2c_test.h"
+#include "uart.h"
+#include "system_clock.h"
+
+int main(void)
+{
+    SystemClock_Config();
+    UART2_Init(I2C_TEST_APB1_CLK_HZ, 115200u);
+
+    UART_Write(USART2, "Running I2C internal loopback test...\r\n");
+    I2C_Internal_Test_All();
+
+    while (1);
+}
