@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (J-Link, STM32F446RE)",
+      "type": "cortex-debug",
+      "request": "launch",
+      "servertype": "jlink",
+      "device": "STM32F446RE",
+      "interface": "swd",
+      "executable": "${workspaceFolder}/build/FREERTOS_PLUS_TCP.elf",
+      "runToEntryPoint": "main",
+      "svdFile": "${workspaceFolder}/STM32F446.svd",
+      "configFiles": [],
+      "ipAddress": null,
+      "preLaunchTask": "build",
+      "postRestartCommands": ["monitor reset"],
+      "cwd": "${workspaceFolder}",
+      "showDevDebugOutput": "raw"
+    }
+  ]
+}
