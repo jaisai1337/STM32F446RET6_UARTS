@@ -275,7 +275,7 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thu
                 0x0000000008000000                g_pfnVectors
                 0x00000000080001c4                . = ALIGN (0x4)
 
-.text           0x00000000080001c4      0xa88
+.text           0x00000000080001c4      0xa8c
                 0x00000000080001c4                . = ALIGN (0x4)
  *(.text)
  .text          0x00000000080001c4       0x40 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
@@ -404,116 +404,115 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thu
                 0x000000000800067c       0x42 build/i2c.o
                 0x000000000800067c                I2C_Master_Address
  .text.I2C_Master_Write
-                0x00000000080006be        0xa build/i2c.o
+                0x00000000080006be       0x10 build/i2c.o
                 0x00000000080006be                I2C_Master_Write
  .text.I2C_Master_Stop
-                0x00000000080006c8        0xa build/i2c.o
-                0x00000000080006c8                I2C_Master_Stop
- *fill*         0x00000000080006d2        0x2 
+                0x00000000080006ce        0xa build/i2c.o
+                0x00000000080006ce                I2C_Master_Stop
  .text.I2C_Slave_Init
-                0x00000000080006d4      0x2a0 build/i2c.o
-                0x00000000080006d4                I2C_Slave_Init
+                0x00000000080006d8      0x2a0 build/i2c.o
+                0x00000000080006d8                I2C_Slave_Init
  .text.UART_PutChar
-                0x0000000008000974        0xa build/uart.o
-                0x0000000008000974                UART_PutChar
+                0x0000000008000978        0xa build/uart.o
+                0x0000000008000978                UART_PutChar
  .text.UART_Write
-                0x000000000800097e       0x12 build/uart.o
-                0x000000000800097e                UART_Write
+                0x0000000008000982       0x12 build/uart.o
+                0x0000000008000982                UART_Write
  .text.UART2_Init
-                0x0000000008000990       0x7c build/uart.o
-                0x0000000008000990                UART2_Init
+                0x0000000008000994       0x7c build/uart.o
+                0x0000000008000994                UART2_Init
  .text.I2C_Internal_Test_All
-                0x0000000008000a0c      0x1e0 build/i2c_test.o
-                0x0000000008000a0c                I2C_Internal_Test_All
+                0x0000000008000a10      0x1e0 build/i2c_test.o
+                0x0000000008000a10                I2C_Internal_Test_All
  .text.__libc_init_array
-                0x0000000008000bec       0x48 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
-                0x0000000008000bec                __libc_init_array
+                0x0000000008000bf0       0x48 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc_nano.a(lib_a-init.o)
+                0x0000000008000bf0                __libc_init_array
  *(.glue_7)
- .glue_7        0x0000000008000c34        0x0 linker stubs
+ .glue_7        0x0000000008000c38        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x0000000008000c34        0x0 linker stubs
+ .glue_7t       0x0000000008000c38        0x0 linker stubs
  *(.eh_frame)
- .eh_frame      0x0000000008000c34        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+ .eh_frame      0x0000000008000c38        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
  *(.init)
- .init          0x0000000008000c34        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crti.o
-                0x0000000008000c34                _init
- .init          0x0000000008000c38        0x8 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtn.o
+ .init          0x0000000008000c38        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crti.o
+                0x0000000008000c38                _init
+ .init          0x0000000008000c3c        0x8 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtn.o
  *(.fini)
- .fini          0x0000000008000c40        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crti.o
-                0x0000000008000c40                _fini
- .fini          0x0000000008000c44        0x8 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtn.o
-                0x0000000008000c4c                . = ALIGN (0x4)
-                0x0000000008000c4c                _etext = .
+ .fini          0x0000000008000c44        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crti.o
+                0x0000000008000c44                _fini
+ .fini          0x0000000008000c48        0x8 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtn.o
+                0x0000000008000c50                . = ALIGN (0x4)
+                0x0000000008000c50                _etext = .
 
-.vfp11_veneer   0x0000000008000c4c        0x0
- .vfp11_veneer  0x0000000008000c4c        0x0 linker stubs
+.vfp11_veneer   0x0000000008000c50        0x0
+ .vfp11_veneer  0x0000000008000c50        0x0 linker stubs
 
-.v4_bx          0x0000000008000c4c        0x0
- .v4_bx         0x0000000008000c4c        0x0 linker stubs
+.v4_bx          0x0000000008000c50        0x0
+ .v4_bx         0x0000000008000c50        0x0 linker stubs
 
-.iplt           0x0000000008000c4c        0x0
- .iplt          0x0000000008000c4c        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+.iplt           0x0000000008000c50        0x0
+ .iplt          0x0000000008000c50        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
 
-.rodata         0x0000000008000c4c      0x1e8
-                0x0000000008000c4c                . = ALIGN (0x4)
+.rodata         0x0000000008000c50      0x1e8
+                0x0000000008000c50                . = ALIGN (0x4)
  *(.rodata)
  *(.rodata*)
  .rodata.AHBPrescTable
-                0x0000000008000c4c       0x10 build/system_stm32f4xx.o
-                0x0000000008000c4c                AHBPrescTable
+                0x0000000008000c50       0x10 build/system_stm32f4xx.o
+                0x0000000008000c50                AHBPrescTable
  .rodata.main.str1.1
-                0x0000000008000c5c       0x28 build/main.o
+                0x0000000008000c60       0x28 build/main.o
  .rodata.I2C_Internal_Test_All.str1.1
-                0x0000000008000c84      0x1a3 build/i2c_test.o
+                0x0000000008000c88      0x1a3 build/i2c_test.o
                                         0x1a6 (size before relaxing)
  .rodata.slaveA_msg
-                0x0000000008000e27        0x6 build/i2c_test.o
+                0x0000000008000e2b        0x6 build/i2c_test.o
  .rodata.slaveB_msg
-                0x0000000008000e2d        0x7 build/i2c_test.o
-                0x0000000008000e34                . = ALIGN (0x4)
+                0x0000000008000e31        0x7 build/i2c_test.o
+                0x0000000008000e38                . = ALIGN (0x4)
 
-.rel.dyn        0x0000000008000e34        0x0
- .rel.iplt      0x0000000008000e34        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+.rel.dyn        0x0000000008000e38        0x0
+ .rel.iplt      0x0000000008000e38        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
 
-.ARM.extab      0x0000000008000e34        0x0
-                0x0000000008000e34                . = ALIGN (0x4)
+.ARM.extab      0x0000000008000e38        0x0
+                0x0000000008000e38                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x0000000008000e34                . = ALIGN (0x4)
+                0x0000000008000e38                . = ALIGN (0x4)
 
-.ARM            0x0000000008000e34        0x0
-                0x0000000008000e34                . = ALIGN (0x4)
-                0x0000000008000e34                __exidx_start = .
+.ARM            0x0000000008000e38        0x0
+                0x0000000008000e38                . = ALIGN (0x4)
+                0x0000000008000e38                __exidx_start = .
  *(.ARM.exidx*)
-                0x0000000008000e34                __exidx_end = .
-                0x0000000008000e34                . = ALIGN (0x4)
+                0x0000000008000e38                __exidx_end = .
+                0x0000000008000e38                . = ALIGN (0x4)
 
-.preinit_array  0x0000000008000e34        0x0
-                0x0000000008000e34                . = ALIGN (0x4)
-                0x0000000008000e34                PROVIDE (__preinit_array_start = .)
+.preinit_array  0x0000000008000e38        0x0
+                0x0000000008000e38                . = ALIGN (0x4)
+                0x0000000008000e38                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x0000000008000e34                PROVIDE (__preinit_array_end = .)
-                0x0000000008000e34                . = ALIGN (0x4)
+                0x0000000008000e38                PROVIDE (__preinit_array_end = .)
+                0x0000000008000e38                . = ALIGN (0x4)
 
-.init_array     0x0000000008000e34        0x4
-                0x0000000008000e34                . = ALIGN (0x4)
-                0x0000000008000e34                PROVIDE (__init_array_start = .)
+.init_array     0x0000000008000e38        0x4
+                0x0000000008000e38                . = ALIGN (0x4)
+                0x0000000008000e38                PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
- .init_array    0x0000000008000e34        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
-                0x0000000008000e38                PROVIDE (__init_array_end = .)
-                0x0000000008000e38                . = ALIGN (0x4)
+ .init_array    0x0000000008000e38        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+                0x0000000008000e3c                PROVIDE (__init_array_end = .)
+                0x0000000008000e3c                . = ALIGN (0x4)
 
-.fini_array     0x0000000008000e38        0x4
-                0x0000000008000e38                . = ALIGN (0x4)
+.fini_array     0x0000000008000e3c        0x4
+                0x0000000008000e3c                . = ALIGN (0x4)
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x0000000008000e38        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
+ .fini_array    0x0000000008000e3c        0x4 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
                 [!provide]                        PROVIDE (__fini_array_end = .)
-                0x0000000008000e3c                . = ALIGN (0x4)
-                0x0000000008000e3c                _sidata = LOADADDR (.data)
+                0x0000000008000e40                . = ALIGN (0x4)
+                0x0000000008000e40                _sidata = LOADADDR (.data)
 
-.data           0x0000000020000000        0x4 load address 0x0000000008000e3c
+.data           0x0000000020000000        0x4 load address 0x0000000008000e40
                 0x0000000020000000                . = ALIGN (0x4)
                 0x0000000020000000                _sdata = .
  *(.data)
@@ -526,11 +525,11 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thu
                 0x0000000020000004                . = ALIGN (0x4)
                 0x0000000020000004                _edata = .
 
-.igot.plt       0x0000000020000004        0x0 load address 0x0000000008000e40
+.igot.plt       0x0000000020000004        0x0 load address 0x0000000008000e44
  .igot.plt      0x0000000020000004        0x0 /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/crtbegin.o
                 0x0000000020000004                . = ALIGN (0x4)
 
-.bss            0x0000000020000004       0x2c load address 0x0000000008000e40
+.bss            0x0000000020000004       0x2c load address 0x0000000008000e44
                 0x0000000020000004                _sbss = .
                 0x0000000020000004                __bss_start__ = _sbss
  *(.bss)
@@ -544,7 +543,7 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thu
                 0x0000000020000030                _ebss = .
 
 ._user_heap_stack
-                0x0000000020000030      0x600 load address 0x0000000008000e40
+                0x0000000020000030      0x600 load address 0x0000000008000e44
                 0x0000000020000030                . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
                 0x0000000020000030                PROVIDE (_end = .)
@@ -590,14 +589,14 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../
 LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../../arm-none-eabi/lib/thumb/v7e-m+fp/hard/libm.a
 LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thumb/v7e-m+fp/hard/libgcc.a
 
-.debug_line     0x0000000000000000     0x193c
+.debug_line     0x0000000000000000     0x195d
  .debug_line    0x0000000000000000       0x81 build/startup_stm32f446xx.o
  .debug_line    0x0000000000000081      0x1ea build/system_clock.o
  .debug_line    0x000000000000026b      0x1e5 build/system_stm32f4xx.o
  .debug_line    0x0000000000000450      0x156 build/main.o
- .debug_line    0x00000000000005a6      0x85d build/i2c.o
- .debug_line    0x0000000000000e03      0x79d build/uart.o
- .debug_line    0x00000000000015a0      0x39c build/i2c_test.o
+ .debug_line    0x00000000000005a6      0x87e build/i2c.o
+ .debug_line    0x0000000000000e24      0x79d build/uart.o
+ .debug_line    0x00000000000015c1      0x39c build/i2c_test.o
 
 .debug_info     0x0000000000000000     0x2039
  .debug_info    0x0000000000000000       0x22 build/startup_stm32f446xx.o
