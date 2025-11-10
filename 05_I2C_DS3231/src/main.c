@@ -5,7 +5,7 @@
 #include "DS3231.h"
 
 
-I2C_TypeDef *I2Cx_Master = I2C3;
+I2C_TypeDef *I2Cx_Master = I2C1;
 
 
 int main(void)
