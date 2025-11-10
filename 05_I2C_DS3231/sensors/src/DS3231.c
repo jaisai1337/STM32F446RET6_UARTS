@@ -40,7 +40,7 @@ void DS3231_SetDateTime(I2C_TypeDef *I2Cx,uint8_t year, uint8_t month, uint8_t d
     UART_Write(USART2, "\r\n=== Setting DS3231 Date/Time ===\r\n");
 
     if (I2C_Master_Address(I2Cx, DS3231_ADDR, I2C_WRITE) != 0) {
-        UART_Write(USART2, "❌ Failed to communicate with DS3231\r\n");
+        UART_Write(USART2, "Failed to communicate with DS3231\r\n");
         return;
     }
 
@@ -55,7 +55,7 @@ void DS3231_SetDateTime(I2C_TypeDef *I2Cx,uint8_t year, uint8_t month, uint8_t d
     I2C_Master_Write(I2Cx, dec_to_bcd(year));    // Year (00–99)
     I2C_Master_Stop(I2Cx);
 
-    UART_Write(USART2, "✅ DS3231 time set successfully\r\n");
+    UART_Write(USART2, "DS3231 time set successfully\r\n");
 }
 
 // ---------------------------------------------------------------------------
@@ -67,7 +67,7 @@ uint8_t DS3231_ReadDateTime(I2C_TypeDef *I2Cx,ds3231_data_struct *dt)
 
     // ---- Step 1: Set register pointer to 0x00 ----
     if (I2C_Master_Address(I2Cx, DS3231_ADDR, I2C_WRITE) != 0) {
-        UART_Write(USART2, "❌ DS3231 read: write phase failed\r\n");
+        UART_Write(USART2, "DS3231 read: write phase failed\r\n");
         return 0;
     }
 
@@ -76,7 +76,7 @@ uint8_t DS3231_ReadDateTime(I2C_TypeDef *I2Cx,ds3231_data_struct *dt)
 
     // ---- Step 2: Start a read transaction ----
     if (I2C_Master_Address(I2Cx, DS3231_ADDR, I2C_READ) != 0) {
-        UART_Write(USART2, "❌ DS3231 read: read phase failed\r\n");
+        UART_Write(USART2, "DS3231 read: read phase failed\r\n");
         return 0;
     }
 
