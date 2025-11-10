@@ -168,7 +168,7 @@ void I2C_Master_Write(I2C_TypeDef *I2Cx, uint8_t data)
     while (!(I2Cx->SR1 & I2C_SR1_TXE));  // Wait until data register empty
     I2Cx->DR = data;                     // Send data
     // Optionally wait for transfer complete
-    // while (!(I2Cx->SR1 & I2C_SR1_BTF));
+     while (!(I2Cx->SR1 & I2C_SR1_BTF));
 }
 
 /**

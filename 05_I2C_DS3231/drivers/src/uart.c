@@ -88,6 +88,12 @@ void UART_WriteHexByte(USART_TypeDef *USARTx, uint8_t value)
     UART_PutChar(USARTx, hex[(value >> 4) & 0x0F]);
     UART_PutChar(USARTx, hex[value & 0x0F]);
 }
+void UART_WriteHex8(USART_TypeDef *USARTx, uint8_t value)
+{
+    const char hex[] = "0123456789ABCDEF";
+    UART_PutChar(USARTx, hex[(value >> 4) & 0x0F]);
+    UART_PutChar(USARTx, hex[value & 0x0F]);
+}
 
 void UART_WriteHex32(USART_TypeDef *USARTx, uint32_t value)
 {

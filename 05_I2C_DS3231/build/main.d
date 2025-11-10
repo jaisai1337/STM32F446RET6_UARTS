@@ -3,7 +3,7 @@ build/main.o: src/main.c inc/stm32f4xx.h inc/stm32f446xx.h \
  inc/Core/Include/cmsis_compiler.h inc/Core/Include/cmsis_gcc.h \
  inc/Core/Include/mpu_armv7.h inc/system_stm32f4xx.h inc/system_clock.h \
  inc/stm32f4xx.h drivers/inc/uart.h drivers/inc/i2c.h \
- sensors/inc/DS3231.h
+ test_cases/inc/DS3231_test.h
 inc/stm32f4xx.h:
 inc/stm32f446xx.h:
 inc/Core/Include/core_cm4.h:
@@ -16,4 +16,4 @@ inc/system_clock.h:
 inc/stm32f4xx.h:
 drivers/inc/uart.h:
 drivers/inc/i2c.h:
-sensors/inc/DS3231.h:
+test_cases/inc/DS3231_test.h:

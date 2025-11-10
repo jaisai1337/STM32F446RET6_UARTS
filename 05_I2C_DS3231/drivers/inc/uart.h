@@ -21,5 +21,7 @@ void UART_ReadString(USART_TypeDef *USARTx, char *buf, uint16_t maxlen);
 int32_t UART_ReadInteger(USART_TypeDef *USARTx);
 uint8_t UART_Available(USART_TypeDef *USARTx);
 void UART_WriteHexByte(USART_TypeDef *USARTx, uint8_t value);
+void UART_WriteHex8(USART_TypeDef *USARTx, uint8_t value);
+void UART_WriteHex32(USART_TypeDef *USARTx, uint32_t value);
 
 #endif // UART_H

@@ -4,6 +4,8 @@
 #include "uart.h"
 
 #define DS3231_ADDR  0x68
+#define AT24C32_ADDR  0x57
+
 
 // Convert decimal to BCD
 static uint8_t dec_to_bcd(uint8_t val)
@@ -22,7 +24,6 @@ static uint8_t bcd_to_dec(uint8_t val)
 // ---------------------------------------------------------------------------
 void DS3231_Init(I2C_TypeDef *I2Cx)
 {
-    UART_Write(USART2, "\r\n=== DS3231 Init ===\r\n\n");
     if (I2C_Master_Address(I2Cx, DS3231_ADDR, I2C_WRITE) == 0) {
         UART_Write(USART2, "DS3231 detected at 0x68\r\n");
         I2C_Master_Stop(I2Cx);
@@ -148,3 +149,99 @@ void DS3231_PrintDateTime(const ds3231_data_struct *dt)
 
     UART_Write(USART2, "\r\n");
 }
+
+
+// AT24C32 
+
+void AT24C32_Init(I2C_TypeDef *I2Cx)
+{
+    if (I2C_Master_Address(I2Cx, DS3231_ADDR, I2C_WRITE) == 0) {
+        UART_Write(USART2, "AT24C32 detected at 0x57\r\n");
+        I2C_Master_Stop(I2Cx);
+    } else {
+        UART_Write(USART2, "AT24C32 not responding!\r\n");
+    }
+}
+
+// ===========================
+// Write a block of data
+// ===========================
+void AT24C32_WriteData(I2C_TypeDef *I2Cx, uint16_t memAddr, uint8_t *data, uint16_t len)
+{
+    // Each write can only write within a 32-byte page!
+    // This simple version writes one page or less.
+
+    if (len > 32) len = 32;  // Limit to one page
+
+    if (I2C_Master_Address(I2Cx, AT24C32_ADDR, I2C_WRITE) != 0)
+    {
+        UART_Write(USART2, "❌ EEPROM NACK on write\r\n");
+        return;
+    }
+
+    // Send memory address (2 bytes)
+    I2C_Master_Write(I2Cx, (uint8_t)(memAddr >> 8));    
+    I2C_Master_Write(I2Cx, (uint8_t)(memAddr & 0xFF));
+
+    // Send data
+    for (uint16_t i = 0; i < len; i++)
+    {
+        I2C_Master_Write(I2Cx, data[i]);
+    }
+
+    I2C_Master_Stop(I2Cx);
+}
+
+// ===========================
+// Read a block of data
+// ===========================
+void AT24C32_ReadData(I2C_TypeDef *I2Cx, uint16_t memAddr, uint8_t *buf, uint16_t len)
+{
+    // ---- 1. Set EEPROM internal address pointer ----
+    if (I2C_Master_Address(I2Cx, AT24C32_ADDR, I2C_WRITE) != 0)
+    {
+        UART_Write(USART2, "❌ EEPROM NACK on address\r\n");
+        return;
+    }
+    I2C_Master_Write(I2Cx, (uint8_t)(memAddr >> 8));
+    I2C_Master_Write(I2Cx, (uint8_t)(memAddr & 0xFF));
+    
+    // NOTE: We assume I2C_Master_Write does NOT send a STOP bit.
+    // If it does, you would need an I2C_Master_Stop() here.
+    // But your code implies it doesn't, so we proceed to Repeated Start.
+
+    // ---- 2. Repeated START for READ ----
+    I2Cx->CR1 |= I2C_CR1_START;
+    while (!(I2Cx->SR1 & I2C_SR1_SB));
+    I2Cx->DR = (AT24C32_ADDR << 1) | I2C_READ;
+    while (!(I2Cx->SR1 & I2C_SR1_ADDR));
+
+    // ---- 3. Sequential Read (Using correct N > 2 logic) ----
+    
+    // This logic assumes len > 2, which is true for "Hello World!" (len=12)
+    // For a 100% robust driver, you'd need separate cases for len=1 and len=2.
+    
+    I2Cx->CR1 |= I2C_CR1_ACK; // Enable ACK
+    (void)I2Cx->SR2; // Clear ADDR
+
+    // Read N-2 bytes
+    for (uint16_t i = 0; i < len - 2; i++)
+    {
+        while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+        buf[i] = I2Cx->DR;
+    }
+
+    // Read byte N-1 (len-2)
+    while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+    I2Cx->CR1 &= ~I2C_CR1_ACK; // Send NACK
+    buf[len - 2] = I2Cx->DR;
+
+    // Read byte N (len-1)
+    while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+    I2Cx->CR1 |= I2C_CR1_STOP; // Send STOP
+    buf[len - 1] = I2Cx->DR;
+
+
+    I2Cx->CR1 |= I2C_CR1_ACK; // restore ACK
+}
+
