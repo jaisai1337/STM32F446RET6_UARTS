@@ -114,7 +114,8 @@ flash: $(BIN)
 	JLinkExe -device STM32F446RE -if SWD -speed 4000 -autoconnect 1 -CommandFile jflash.jlink
 
 manual_flash:
-	JLinkExe -device STM32F446RE -if SWD -speed 4000 -CommandFile build/UARTS.jlink
+	JLinkExe -device STM32F446RE -if SWD -speed 4000 -CommandFile $(JLINK)
+
 # Clean build directory
 clean:
 	rm -rf $(BUILD_DIR)
