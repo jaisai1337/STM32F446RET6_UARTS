@@ -39,7 +39,7 @@ int main(void)
             DS3231_PrintDateTime(&rtc);
         } else {
             // Optional: log once if needed
-            // UART_Write(USART2, "❌ DS3231 read failed\r\n");
+            // UART_Write(USART2, "DS3231 read failed\r\n");
         }
         sysTickDelay(1000);
     }
