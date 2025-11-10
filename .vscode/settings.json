@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "system_clock.h": "c",
+        "ds3231.h": "c",
+        "stm32f4xx.h": "c",
+        "uart.h": "c",
+        "systick.h": "c",
+        "i2c.h": "c"
+    }
+}

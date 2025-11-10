@@ -25,15 +25,17 @@ DRIVER_SRCS = $(wildcard $(DRIVER_DIR)/src/*.c)
 UTILS_SRCS = $(wildcard $(UTILS_DIR)/src/*.c)
 TEST_CASE_SRCS = $(wildcard $(TEST_CASE_DIR)/src/*.c)
 
+
 OBJS = \
 		$(patsubst $(SYS_DIR)/%.s,$(BUILD_DIR)/%.o,$(filter %.s,$(SYS_SRCS))) \
 		$(patsubst $(SYS_DIR)/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(SYS_SRCS))) \
 		$(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(SRCS))) \
 		$(patsubst $(DRIVER_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(DRIVER_SRCS))) \
 		$(patsubst $(UTILS_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(UTILS_SRCS))) \
-		$(patsubst $(TEST_CASE_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(TEST_CASE_SRCS)))
+		$(patsubst $(TEST_CASE_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(filter %.c,$(TEST_CASE_SRCS))) \
 
 
+# Build targets
 ELF  = $(BUILD_DIR)/$(PROJECT).elf
 BIN  = $(BUILD_DIR)/$(PROJECT).bin
 HEX  = $(BUILD_DIR)/$(PROJECT).hex
@@ -45,7 +47,7 @@ INCLUDES = -I$(INC_DIR) \
 	-I$(INC_DIR)/Core/Include \
 	-I$(DRIVER_DIR)/inc \
 	-I$(UTILS_DIR)/inc \
-	-I$(TEST_CASE_DIR)/inc
+	-I$(TEST_CASE_DIR)/inc \
 
 CFLAGS = $(CPU)  -std=gnu11 -g -Wall -w -Os -ffunction-sections -fdata-sections -MMD -MP $(INCLUDES) -DSTM32F446xx
 ASM_FLAGS = $(CPU) -g3 -x assembler-with-cpp
@@ -104,7 +106,7 @@ flash: $(BIN)
 	JLinkExe -device STM32F446RE -if SWD -speed 4000 -autoconnect 1 -CommandFile jflash.jlink
 
 manual_flash:
-	JLinkExe -device STM32F446RE -if SWD -speed 4000 -CommandFile build/UARTS.jlink
+	JLinkExe -device STM32F446RE -if SWD -speed 4000 -CommandFile  $(JLINK)
 # Clean build directory
 clean:
 	rm -rf $(BUILD_DIR)

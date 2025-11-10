@@ -104,30 +104,36 @@ clean:
 
 
 print_size:
-	@echo "Memory usage:"
+	@echo "Memory usage summary:"
 	@$(SIZE) -B $(ELF)
+	@echo ""
 	@$(SIZE) -B -A $(ELF) | awk '\
-		/\.text/ { flash += $$2 } \
-		/\.data/ { flash += $$2; ram += $$2 } \
-		/\.bss/  { ram += $$2 } \
+		/\.isr_vector/  { flash += $$2 } \
+		/\.text/        { flash += $$2 } \
+		/\.rodata/      { flash += $$2 } \
+		/\.ARM.extab/   { flash += $$2 } \
+		/\.ARM/         { flash += $$2 } \
+		/\.init_array/  { flash += $$2 } \
+		/\.fini_array/  { flash += $$2 } \
+		/\.data/        { flash += $$2; ram += $$2 } \
+		/\.bss/         { ram += $$2 } \
+		/_user_heap_stack/ { ram += $$2 } \
 		END { \
 			flash_total = 524288; \
-			ram_total = 131072; \
-			ram_perc = ram / ram_total * 100; \
+			ram_total   = 131072; \
+			ram_perc   = ram / ram_total * 100; \
 			flash_perc = flash / flash_total * 100; \
-			ram_bar = int(ram_perc / 10); \
+			ram_bar   = int(ram_perc / 10); \
 			flash_bar = int(flash_perc / 10); \
-			printf "RAM:   [%s%s] %4.1f%% (used %d bytes from %d bytes)\n", \
+			printf "RAM:   [%s%s] %5.1f%% (used %d of %d bytes)\n", \
 				repeat("#", ram_bar), repeat(" ", 10 - ram_bar), \
 				ram_perc, ram, ram_total; \
-			printf "Flash: [%s%s] %4.1f%% (used %d bytes from %d bytes)\n", \
+			printf "Flash: [%s%s] %5.1f%% (used %d of %d bytes)\n", \
 				repeat("#", flash_bar), repeat(" ", 10 - flash_bar), \
 				flash_perc, flash, flash_total; \
 		} \
-		function repeat(s, n,    r) { \
-			r = ""; \
-			for (i = 0; i < n; i++) r = r s; \
-			return r; \
+		function repeat(s, n, r) { \
+			r = ""; for (i = 0; i < n; i++) r = r s; return r; \
 		}'
 
 .PHONY: all flash clean

@@ -580,18 +580,18 @@ LOAD /opt/gcc-arm-none-eabi-10.3-2021.10/bin/../lib/gcc/arm-none-eabi/10.3.1/thu
  .debug_aranges
                 0x0000000000000118       0x28 build/uart_test.o
 
-.debug_str      0x0000000000000000      0x561
+.debug_str      0x0000000000000000      0x58f
  .debug_str     0x0000000000000000       0x5a build/startup_stm32f446xx.o
  .debug_str     0x000000000000005a      0x28f build/system_clock.o
                                         0x301 (size before relaxing)
  .debug_str     0x00000000000002e9       0xce build/system_stm32f4xx.o
                                         0x376 (size before relaxing)
- .debug_str     0x00000000000003b7       0x38 build/main.o
-                                        0x1a5 (size before relaxing)
- .debug_str     0x00000000000003ef      0x157 build/uart.o
+ .debug_str     0x00000000000003b7       0x66 build/main.o
+                                        0x1a8 (size before relaxing)
+ .debug_str     0x000000000000041d      0x157 build/uart.o
                                         0x410 (size before relaxing)
- .debug_str     0x0000000000000546       0x1b build/uart_test.o
-                                        0x38d (size before relaxing)
+ .debug_str     0x0000000000000574       0x1b build/uart_test.o
+                                        0x390 (size before relaxing)
 
 .debug_ranges   0x0000000000000000      0x158
  .debug_ranges  0x0000000000000000       0x20 build/startup_stm32f446xx.o
