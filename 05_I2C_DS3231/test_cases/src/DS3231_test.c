@@ -18,7 +18,7 @@ void DS3231_Test_Run(I2C_TypeDef *I2Cx, uint8_t use_rtc, uint8_t use_eeprom)
         DS3231_Init(I2Cx);
 
         // Uncomment once to set date/time
-        // DS3231_SetDateTime(25, 11, 10, 2, 23, 15, 0); // yyyy=2025, mm=11, dd=10, DOW=2 (Mon)
+        // DS3231_SetDateTime(I2Cx, 25, 11, 13, 5, 1, 12, 00); // YY, MM, DD, DOW, HH, MM, SS
 
         UART_Write(USART2, "DS3231 Ready.\r\n\n");
     }

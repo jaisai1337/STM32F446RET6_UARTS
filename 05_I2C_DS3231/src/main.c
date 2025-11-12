@@ -5,8 +5,8 @@
 #include "DS3231_test.h"
 
 
-#define USE_DS3231     0   // 1 = enable DS3231 RTC test
-#define USE_AT24C32    0   // 1 = enable AT24C32 EEPROM test
+#define USE_DS3231     1   // 1 = enable DS3231 RTC test
+#define USE_AT24C32    1   // 1 = enable AT24C32 EEPROM test
 #define APB1_CLK_HZ  45000000u  // APB1 clock frequency in Hz
 #define APB2_CLK_HZ  90000000u  // APB2 clock frequency in Hz
 
@@ -21,7 +21,6 @@ int main(void)
     UART_Write(USART2, "\r\n=== DS3231 RTC & AT24C32 Combined Test ===\r\n");
 
     I2C_Master_Init(I2Cx_Master, 45000000u, 100000u);
-    I2C_Internal_Test_All(3);  // Run internal I2C loopback test with I2C1 as master
     
 
     // Display config info
