@@ -64,54 +64,29 @@ void _exit (int status)
   while (1) {}    /* Make sure we hang here */
 }
 
-// __attribute__((weak)) int _read(int file, char *ptr, int len)
-// {
-//   (void)file;
-//   int DataIdx;
-
-//   for (DataIdx = 0; DataIdx < len; DataIdx++)
-//   {
-//     *ptr++ = __io_getchar();
-//   }
-
-//   return len;
-// }
-
-// __attribute__((weak)) int _write(int file, char *ptr, int len)
-// {
-//   (void)file;
-//   int DataIdx;
-
-//   for (DataIdx = 0; DataIdx < len; DataIdx++)
-//   {
-//     __io_putchar(*ptr++);
-//   }
-//   return len;
-// }
-
-#include "uart.h"
-#include <sys/unistd.h> // for STDOUT_FILENO, STDERR_FILENO
-
-int _write(int file, char *ptr, int len)
+__attribute__((weak)) int _read(int file, char *ptr, int len)
 {
-    if (file == STDOUT_FILENO || file == STDERR_FILENO)
-    {
-        for (int i = 0; i < len; i++)
-            UART2_PutChar(ptr[i]);
-        return len;
-    }
-    return -1;
+  (void)file;
+  int DataIdx;
+
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    *ptr++ = __io_getchar();
+  }
+
+  return len;
 }
 
-int _read(int file, char *ptr, int len)
+__attribute__((weak)) int _write(int file, char *ptr, int len)
 {
-    if (file == STDIN_FILENO)
-    {
-        for (int i = 0; i < len; i++)
-            ptr[i] = UART2_GetChar();  // blocking receive
-        return len;
-    }
-    return -1;
+  (void)file;
+  int DataIdx;
+
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    __io_putchar(*ptr++);
+  }
+  return len;
 }
 
 int _close(int file)
