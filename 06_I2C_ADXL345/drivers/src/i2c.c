@@ -180,6 +180,9 @@ void I2C_Master_Stop(I2C_TypeDef *I2Cx)
     I2Cx->CR1 |= I2C_CR1_STOP;           // Generate STOP condition
 }
 
+// Slave 
+
+
 /**
  * @brief  Generic I2C Slave initialization (supports I2C2 and I2C3)
  * @param  I2Cx         I2C2 or I2C3 instance
@@ -304,3 +307,175 @@ void I2C_Slave_Init(I2C_TypeDef *I2Cx, uint32_t pclk1, uint8_t own_address, uint
     I2Cx->CR1 |= (I2C_CR1_PE | I2C_CR1_ACK);
 }
 
+
+/**
+ * @brief Wait for the I2C peripheral to be addressed by a master.
+ * @param I2Cx Pointer to I2C instance
+ * @return 0 on success, -1 on timeout
+ */
+int I2C_Slave_WaitForAddress(I2C_TypeDef *I2Cx)
+{
+    uint32_t timeout = 100000;
+    while (!(I2Cx->SR1 & I2C_SR1_ADDR))
+    {
+        if (--timeout == 0)
+            return -1;
+    }
+
+    (void)I2Cx->SR2; // Clear ADDR flag
+    return 0;
+}
+
+/**
+ * @brief Clears acknowledge failure flag if master NACKs the slave.
+ */
+void I2C_Slave_ClearAF(I2C_TypeDef *I2Cx)
+{
+    if (I2Cx->SR1 & I2C_SR1_AF)
+        I2Cx->SR1 &= ~I2C_SR1_AF;
+}
+
+/**
+ * @brief Waits until master sends START for write and transmits data to slave.
+ * @param I2Cx Pointer to I2C instance (I2C1, I2C2, I2C3)
+ * @param buf  Buffer to store received bytes
+ * @param len  Number of bytes expected
+ * @return Number of bytes received
+ */
+int I2C_Slave_Read(I2C_TypeDef *I2Cx, uint8_t *buf, uint16_t len)
+{
+    if (I2C_Slave_WaitForAddress(I2Cx) != 0)
+        return -1;
+
+    uint16_t received = 0;
+    while (received < len)
+    {
+        // Wait until RXNE (data received)
+        while (!(I2Cx->SR1 & I2C_SR1_RXNE))
+        {
+            // Stop detected = transmission ended
+            if (I2Cx->SR1 & I2C_SR1_STOPF)
+            {
+                (void)I2Cx->SR1;
+                I2Cx->CR1 |= I2C_CR1_PE;
+                return received;
+            }
+        }
+
+        buf[received++] = I2Cx->DR;
+    }
+
+    return received;
+}
+
+/**
+ * @brief Waits for master read request and sends bytes as a slave.
+ * @param I2Cx Pointer to I2C instance (I2C1, I2C2, I2C3)
+ * @param buf  Buffer containing data to send
+ * @param len  Number of bytes to send
+ * @return Number of bytes sent
+ */
+int I2C_Slave_Write(I2C_TypeDef *I2Cx, const uint8_t *buf, uint16_t len)
+{
+    if (I2C_Slave_WaitForAddress(I2Cx) != 0)
+        return -1;
+
+    uint16_t sent = 0;
+    while (sent < len)
+    {
+        // Wait until TXE (data register empty)
+        while (!(I2Cx->SR1 & I2C_SR1_TXE))
+        {
+            if (I2Cx->SR1 & I2C_SR1_AF)  // NACK from master
+            {
+                I2C_Slave_ClearAF(I2Cx);
+                return sent;
+            }
+        }
+
+        I2Cx->DR = buf[sent++];
+    }
+
+    // Wait for final transfer complete or NACK
+    while (!(I2Cx->SR1 & (I2C_SR1_AF | I2C_SR1_STOPF)));
+    I2C_Slave_ClearAF(I2Cx);
+
+    (void)I2Cx->SR1;
+    I2Cx->CR1 |= I2C_CR1_PE;
+
+    return sent;
+}
+
+void I2C_Master_ReadMulti(I2C_TypeDef *I2Cx, uint8_t slave_addr, uint8_t start_reg, uint8_t *buf, uint16_t len)
+{
+    // 1. Set register pointer (START + ADDR(W) + WRITE(reg))
+    // We assume this won't fail (or I2C_Master_Address would handle it)
+    I2C_Master_Address(I2Cx, slave_addr, I2C_WRITE);
+    
+    // Write the register to start reading from
+    // Wait for TXE only, not BTF, because we need a REPEATED START, not a STOP.
+    while (!(I2Cx->SR1 & I2C_SR1_TXE));
+    I2Cx->DR = start_reg;
+    while (!(I2Cx->SR1 & I2C_SR1_BTF)); // Wait for transfer to complete
+
+    // 2. Repeated START + ADDR(R)
+    I2Cx->CR1 |= I2C_CR1_START;
+    while (!(I2Cx->SR1 & I2C_SR1_SB));
+    
+    I2Cx->DR = (slave_addr << 1) | I2C_READ;
+    while (!(I2Cx->SR1 & I2C_SR1_ADDR));
+
+    // 3. Handle the N-byte read sequence based on `len`
+    if (len == 1)
+    {
+        // N=1 Case (e.g., read DEVID)
+        I2Cx->CR1 &= ~I2C_CR1_ACK; // Send NACK (before clearing ADDR)
+        (void)I2Cx->SR1; (void)I2Cx->SR2; // Clear ADDR
+        I2C_Master_Stop(I2Cx); // Send STOP
+        
+        while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+        buf[0] = I2Cx->DR;
+    }
+    else if (len == 2)
+    {
+        // N=2 Case
+        I2Cx->CR1 |= I2C_CR1_POS; // Set POS (for NACK on N-1)
+        (void)I2Cx->SR1; (void)I2Cx->SR2; // Clear ADDR
+        I2Cx->CR1 &= ~I2C_CR1_ACK; // Send NACK
+        
+        while (!(I2Cx->SR1 & I2C_SR1_BTF)); // Wait for 2 bytes (RXNE=1, BTF=1)
+        
+        I2C_Master_Stop(I2Cx); // Send STOP
+        buf[0] = I2Cx->DR;
+        buf[1] = I2Cx->DR;
+        
+        I2Cx->CR1 &= ~I2C_CR1_POS; // Clear POS
+    }
+    else // len > 2 (e.g., N=6 for accel data)
+    {
+        // N > 2 Case
+        I2Cx->CR1 |= I2C_CR1_ACK; // Enable ACK
+        (void)I2Cx->SR1; (void)I2Cx->SR2; // Clear ADDR
+
+        // Read N-2 bytes (ACKing each one)
+        for (uint16_t i = 0; i < len - 2; i++) {
+            while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+            buf[i] = I2Cx->DR;
+            // ACK is sent automatically
+        }
+
+        // Read byte N-1
+        while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+        buf[len - 2] = I2Cx->DR;
+        
+        // Read byte N (last byte)
+        I2Cx->CR1 &= ~I2C_CR1_ACK; // Send NACK (before N is received)
+        I2C_Master_Stop(I2Cx); // Send STOP
+        
+        while (!(I2Cx->SR1 & I2C_SR1_RXNE));
+        buf[len - 1] = I2Cx->DR;
+    }
+
+    // Restore ACK setting for next transaction
+    I2Cx->CR1 |= I2C_CR1_ACK;
+}
