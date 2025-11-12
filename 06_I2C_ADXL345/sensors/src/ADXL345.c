@@ -1,4 +1,4 @@
-#include "ADXL345_test.h"
+#include "ADXL345.h"
 #include "i2c.h"
 #include "uart.h" // For logging
 #include <stdio.h>
@@ -41,7 +41,7 @@ static void adxl_read_multi(I2C_TypeDef *I2Cx, uint8_t start_reg, uint8_t *buf, 
         // N=1 Case (for adxl_read_reg / DEVID)
         I2Cx->CR1 &= ~I2C_CR1_ACK; // Send NACK
         (void)I2Cx->SR2; // Clear ADDR
-        I2Cx->CR1 |= I2C_CR1_STOP; // Send STOP
+        I2C_Master_Stop(I2Cx); // Send STOP
         
         while (!(I2Cx->SR1 & I2C_SR1_RXNE));
         buf[0] = I2Cx->DR;
@@ -55,7 +55,7 @@ static void adxl_read_multi(I2C_TypeDef *I2Cx, uint8_t start_reg, uint8_t *buf, 
         
         while (!(I2Cx->SR1 & I2C_SR1_BTF)); // Wait for 2 bytes
         
-        I2Cx->CR1 |= I2C_CR1_STOP; // Send STOP
+        I2C_Master_Stop(I2Cx); // Send STOP
         buf[0] = I2Cx->DR;
         buf[1] = I2Cx->DR;
         
@@ -80,7 +80,7 @@ static void adxl_read_multi(I2C_TypeDef *I2Cx, uint8_t start_reg, uint8_t *buf, 
 
         // Read byte N
         while (!(I2Cx->SR1 & I2C_SR1_RXNE));
-        I2Cx->CR1 |= I2C_CR1_STOP; // Send STOP
+        I2C_Master_Stop(I2Cx);
         buf[len - 1] = I2Cx->DR;
     }
 
@@ -106,10 +106,10 @@ uint8_t ADXL345_Test_Connection(I2C_TypeDef *I2Cx)
     uint8_t dev_id = adxl_read_reg(I2Cx, ADXL345_REG_DEVID);
 
     if (dev_id == 0xE5) {
-        UART_Write(USART2, "ADXL345 Connection success! DEVID=0xE5\r\n");
+        UART_Write(USART2, "ADXL345 Connection success! Device ID=0xE5\r\n");
         return 0;
     } else {
-        UART_Write(USART2, "ADXL345 Connection failed! DEVID=0x");
+        UART_Write(USART2, "ADXL345 Connection failed! Device ID=0x");
         UART_WriteHexByte(USART2, dev_id);
         UART_Write(USART2, "\r\n");
         return 1;
@@ -120,13 +120,13 @@ void ADXL345_Init(I2C_TypeDef *I2Cx)
 {
     UART_Write(USART2, "Initializing ADXL345...\r\n");
 
-    // 1. Set Data Format: 16g range, full resolution
+    // Set Data Format: 16g range, full resolution
     // 0x0B = 0b00001011
     // Bit 3 (FULL_RES) = 1 (Maintains 4mg/LSB resolution)
     // Bits 1:0 (Range) = 11 (±16g)
     adxl_write_reg(I2Cx, ADXL345_REG_DATA_FORMAT, 0x0B);
 
-    // 2. Wake up: Set Measure bit
+    // Wake up: Set Measure bit
     // 0x08 = 0b00001000
     // Bit 3 (Measure) = 1
     adxl_write_reg(I2Cx, ADXL345_REG_POWER_CTL, 0x08);

@@ -4,12 +4,7 @@
 #include "stm32f4xx.h"
 #include <stdint.h>
 
-void UART1_Init(uint32_t pclk_hz, uint32_t baud);
-void UART2_Init(uint32_t pclk_hz, uint32_t baud);
-void UART3_Init(uint32_t pclk_hz, uint32_t baud);
-void UART4_Init(uint32_t pclk_hz, uint32_t baud);
-void UART5_Init(uint32_t pclk_hz, uint32_t baud);
-void UART6_Init(uint32_t pclk_hz, uint32_t baud);
+void UART_Init(USART_TypeDef *USARTx, uint32_t pclk_hz, uint32_t baud);
 
 // Generic versions that take USART instance pointer
 void UART_PutChar(USART_TypeDef *USARTx, char c);

@@ -50,13 +50,13 @@ void DS3231_Test_Run(I2C_TypeDef *I2Cx, uint8_t use_rtc, uint8_t use_eeprom)
             if (DS3231_ReadDateTime(I2Cx, &rtc))
                 DS3231_PrintDateTime(&rtc);
             else
-                UART_Write(USART2, "⚠️  DS3231 read failed\r\n");
+                UART_Write(USART2, " DS3231 read failed\r\n");
 
             sysTickDelay(1000);
         }
     }
     else
     {
-        UART_Write(USART2, "RTC disabled — test complete.\r\n");
+        UART_Write(USART2, "RTC disabled - test complete.\r\n");
     }
 }
