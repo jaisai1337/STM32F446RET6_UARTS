@@ -1,6 +1,101 @@
+#include <stdio.h>
+#include <stdint.h>
 #include "uart.h"
 
+// int _write(int file, char *ptr, int len)
+// {
+//     (void)file; // Unused parameter
+//     int i;
+//     for (i = 0; i < len; i++)
+//     {
+//         UART_PutChar(USART2, ptr[i]);
+//     }
+//     return len;
+// }
+
+__attribute__((weak)) int __io_putchar(int ch)
+{
+    // Send the character to USART2
+    UART_PutChar(USART2, (uint8_t)ch);
+    return ch;
+}
+
+__attribute__((weak)) int __io_getchar(void)
+{
+    // Wait for and return a character from USART2
+    return (int)UART_GetChar(USART2);
+}
+
+static void uart_configure_pin(GPIO_TypeDef *Port, uint8_t Pin, uint8_t AF_Num)
+{
+    // 1. Enable GPIO clock
+    RCC->AHB1ENR |= (1u << (((uint32_t)Port - (uint32_t)GPIOA) / 0x400));
+
+    // 2. Configure Pin: AF, High Speed, Push-Pull, No Pull
+    Port->MODER   &= ~(3u << (Pin * 2)); // Clear mode
+    Port->MODER   |=  (2u << (Pin * 2)); // Set to AF mode
+    Port->OSPEEDR |=  (3u << (Pin * 2)); // Very high speed
+    Port->OTYPER  &= ~(1u << Pin);      // Push-pull
+    Port->PUPDR   &= ~(3u << (Pin * 2)); // No pull-up/pull-down
+
+    // 3. Configure Alternate Function
+    uint8_t afr_idx   = Pin / 8; // AFR[0] or AFR[1]
+    uint8_t afr_shift = (Pin % 8) * 4;
+    Port->AFR[afr_idx] &= ~(0xFu << afr_shift);
+    Port->AFR[afr_idx] |= (AF_Num << afr_shift);
+}
+
+// ============================================================================
+//                          PUBLIC FUNCTIONS
+// ============================================================================
+
+void UART_Init(USART_TypeDef *USARTx, uint32_t pclk_hz, uint32_t baud)
+{
+    // 1. Enable the peripheral clock and configure GPIOs
+    if (USARTx == USART1) {
+        RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+        uart_configure_pin(GPIOA, 9,  7); // PA9  (TX)
+        uart_configure_pin(GPIOA, 10, 7); // PA10 (RX)
+    }
+    else if (USARTx == USART2) {
+        RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+        uart_configure_pin(GPIOA, 2, 7); // PA2 (TX)
+        uart_configure_pin(GPIOA, 3, 7); // PA3 (RX)
+    }
+    else if (USARTx == USART3) {
+        RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+        uart_configure_pin(GPIOB, 10, 7); // PB10 (TX)
+        uart_configure_pin(GPIOC, 5,  7); // PC5  (RX)
+    }
+    else if (USARTx == UART4) {
+        RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+        uart_configure_pin(GPIOA, 0, 8); // PA0 (TX)
+        uart_configure_pin(GPIOA, 1, 8); // PA1 (RX)
+    }
+    else if (USARTx == UART5) {
+        RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+        uart_configure_pin(GPIOC, 12, 8); // PC12 (TX)
+        uart_configure_pin(GPIOD, 2,  8); // PD2  (RX)
+    }
+    else if (USARTx == USART6) {
+        RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
+        uart_configure_pin(GPIOC, 6, 8); // PC6 (TX)
+        uart_configure_pin(GPIOC, 7, 8); // PC7 (RX)
+    }
+    else {
+        // Invalid peripheral
+        return;
+    }
+
+    // 2. Configure USART peripheral (common logic)
+    USARTx->CR1 = USARTx->CR2 = USARTx->CR3 = 0;    // Reset registers
+    USARTx->BRR = (pclk_hz + (baud / 2u)) / baud;  // Set baud rate
+    USARTx->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_UE); // Enable TX, RX, USART
+    (void)USARTx->SR; (void)USARTx->DR;            // Clear status registers
+}
+
 // ---------------------- Common Generic Functions ----------------------
+
 void UART_PutChar(USART_TypeDef *USARTx, char c)
 {
     while ((USARTx->SR & USART_SR_TXE) == 0);
@@ -80,7 +175,7 @@ uint8_t UART_Available(USART_TypeDef *USARTx)
     return (USARTx->SR & USART_SR_RXNE) ? 1 : 0;
 }
 
-
+#if 0 //If needed, implement specific UART init functions here
 //----------------- UART2_Init ----------------
 void UART2_Init(uint32_t pclk_hz, uint32_t baud){
     // ---- Enable Clocks ----
@@ -249,4 +344,4 @@ void UART6_Init(uint32_t pclk_hz, uint32_t baud){
     USART6->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_UE); // Enable TX, RX, and USART6
     (void)USART6->SR; (void)USART6->DR;                          // Clear status registers
 }
-
+#endif

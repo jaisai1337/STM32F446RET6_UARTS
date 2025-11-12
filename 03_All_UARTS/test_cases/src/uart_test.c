@@ -4,7 +4,10 @@
 #include <stdio.h>
 
 #define LED_PIN 5
-
+// Define your system clock frequencies
+// (These are assumed from your original file)
+#define PCLK1_FREQ 45000000u
+#define PCLK2_FREQ 90000000u
 
 //-----------Quick Test Procedure-----------------
 // UART	    TX Pin	    RX Pin	    Loopback Test
@@ -17,31 +20,36 @@
 // ---------- Initialize all UARTs ----------
 void UART_All_Init(void)
 {
-    // USART2: USB virtual COM (APB1 = 45 MHz)
-    UART2_Init(45000000u, 115200u);
+    // USART2: USB virtual COM (On APB1)
+    UART_Init(USART2, PCLK1_FREQ, 115200u);
     UART_Write(USART2, "\r\n[BOOT] USART2: USB virtual COM ready\r\n");
 
-    // USART1: PA9-TX, PA10-RX (APB2 = 90 MHz)
-    UART1_Init(90000000u, 115200u);
+    // USART1: PA9-TX, PA10-RX (On APB2)
+    UART_Init(USART1, PCLK2_FREQ, 115200u);
     UART_Write(USART2, "[BOOT] USART1: Ready (PA9-TX, PA10-RX)\r\n");
 
-    // USART3: PB10-TX, PC5-RX (APB1 = 45 MHz)
-    UART3_Init(45000000u, 115200u);
+    // USART3: PB10-TX, PC5-RX (On APB1)
+    UART_Init(USART3, PCLK1_FREQ, 115200u);
     UART_Write(USART2, "[BOOT] USART3: Ready (PB10-TX, PC5-RX)\r\n");
 
-    // UART4: PA0-TX, PA1-RX (APB1 = 45 MHz)
-    UART4_Init(45000000u, 115200u);
+    // UART4: PA0-TX, PA1-RX (On APB1)
+    UART_Init(UART4, PCLK1_FREQ, 115200u);
     UART_Write(USART2, "[BOOT] UART4: Ready (PA0-TX, PA1-RX)\r\n");
 
-    // UART5: PC12-TX, PD2-RX (APB1 = 45 MHz)
-    UART5_Init(45000000u, 115200u);
+    // UART5: PC12-TX, PD2-RX (On APB1)
+    UART_Init(UART5, PCLK1_FREQ, 115200u);
     UART_Write(USART2, "[BOOT] UART5: Ready (PC12-TX, PD2-RX)\r\n");
 
-    // USART6: PC6-TX, PC7-RX (APB2 = 90 MHz)
-    UART6_Init(90000000u, 115200u);
+    // USART6: PC6-TX, PC7-RX (On APB2)
+    UART_Init(USART6, PCLK2_FREQ, 115200u);
     UART_Write(USART2, "[BOOT] USART6: Ready (PC6-TX, PC7-RX)\r\n");
 
-    UART_Write(USART2, "\r\n[INFO] UART test ready. Type 1–6 to ping UARTs.\r\n");
+    UART_Write(USART2, "\r\n[INFO] UART test ready. Type 1, 3, 4, 5, 6 to ping UARTs.\r\n");
+    float pi = 3.14159f;
+    // Output → The value of pi is 3.14159
+
+
+    //sprintf("[INFO] Make sure to connect TX and RX pins for loopback tests.\n");
 }
 
 // ---------- UART Test Loop ----------
@@ -83,7 +91,7 @@ void UART_Test_Run(void)
                     UART_Write(USART2, "[TX] Sent to USART6\r\n");
                     break;
                 default:
-                    UART_Write(USART2, "[HELP] Press 1–6 to test UARTs\r\n");
+                    UART_Write(USART2, "[HELP] Press 1-6 to test UARTs\r\n");
                     break;
             }
         }

@@ -9,7 +9,7 @@
 #include <stdio.h>
 int main(void)
 {
-    SystemClock_Config(); // Configure system clock to 180 MHz
+    SystemClock_Config();
     UART_All_Init();
     UART_Test_Run();
 

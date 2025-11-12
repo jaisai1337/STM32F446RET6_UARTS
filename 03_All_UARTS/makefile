@@ -49,7 +49,7 @@ INCLUDES = -I$(INC_DIR) \
 
 CFLAGS = $(CPU)  -std=gnu11 -g -Wall -w -Os -ffunction-sections -fdata-sections -MMD -MP $(INCLUDES) -DSTM32F446xx
 ASM_FLAGS = $(CPU) -g3 -x assembler-with-cpp
-LDFLAGS = -TSTM32F446RETX_FLASH.ld -Wl,--gc-sections -specs=nosys.specs -specs=nano.specs -lc -lnosys -Wl,-Map=$(MAP_FILE) 
+LDFLAGS = -TSTM32F446RETX_FLASH.ld -Wl,--gc-sections -specs=nosys.specs -specs=nano.specs -lc -lnosys -Wl,-Map=$(MAP_FILE)
 
 
 
