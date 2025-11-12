@@ -45,11 +45,6 @@ void UART_All_Init(void)
     UART_Write(USART2, "[BOOT] USART6: Ready (PC6-TX, PC7-RX)\r\n");
 
     UART_Write(USART2, "\r\n[INFO] UART test ready. Type 1, 3, 4, 5, 6 to ping UARTs.\r\n");
-    float pi = 3.14159f;
-    // Output → The value of pi is 3.14159
-
-
-    //sprintf("[INFO] Make sure to connect TX and RX pins for loopback tests.\n");
 }
 
 // ---------- UART Test Loop ----------
