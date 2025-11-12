@@ -2,16 +2,13 @@
 #define UART_H
 
 #include "stm32f4xx.h"
+#include <stdio.h>
 #include <stdint.h>
 
-void UART1_Init(uint32_t pclk_hz, uint32_t baud);
-void UART2_Init(uint32_t pclk_hz, uint32_t baud);
-void UART3_Init(uint32_t pclk_hz, uint32_t baud);
-void UART4_Init(uint32_t pclk_hz, uint32_t baud);
-void UART5_Init(uint32_t pclk_hz, uint32_t baud);
-void UART6_Init(uint32_t pclk_hz, uint32_t baud);
+void UART_Init(USART_TypeDef *USARTx, uint32_t pclk_hz, uint32_t baud);
 
 // Generic versions that take USART instance pointer
+void UART_PrintFloat(USART_TypeDef *USARTx, const char *label, float value, uint8_t decimals);
 void UART_PutChar(USART_TypeDef *USARTx, char c);
 void UART_Write(USART_TypeDef *USARTx, const char *s);
 void UART_Flush(USART_TypeDef *USARTx);
