@@ -12,7 +12,7 @@ output_jlink = sys.argv[2]
 print("Reading:", input_hex)
 ih = IntelHex(input_hex)
 if ih.maxaddr() < ih.minaddr():
-    print("⚠️ No valid data found in HEX file!")
+    print("No valid data found in HEX file!")
     sys.exit(1)
 
 min_addr = ih.minaddr()
